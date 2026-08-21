@@ -11,7 +11,7 @@ export default function ProductsPage() {
       <main>
         <PageHeader
           eyebrow="Our products"
-          title="One platform, four ways to grow."
+          title="One platform, Multiple ways to grow."
           description="CRM, ERP, Hospital Management, and Clinic Management — use one standalone, or combine all four on a shared data layer and login."
         />
         <Products />

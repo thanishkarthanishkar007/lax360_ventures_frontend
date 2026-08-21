@@ -123,7 +123,7 @@ export default function Products() {
             </p>
             <h2 className="font-display text-4xl lg:text-5xl font-extrabold text-paper leading-[1.05]">
               One platform,
-              <br /> four ways to grow.
+              <br /> Multiple ways to grow.
             </h2>
           </div>
           <p className="max-w-sm text-paper/50 text-sm">
