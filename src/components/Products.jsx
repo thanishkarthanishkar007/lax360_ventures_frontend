@@ -1,38 +1,40 @@
-import { useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Workflow, LineChart, Wallet, Megaphone, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { Users, Layers, Hospital, Stethoscope, ArrowUpRight, CheckCircle2, Box } from "lucide-react";
 
-const PRODUCTS = [
+const DEFAULT_PRODUCTS = [
   {
-    icon: Workflow,
-    name: "FlowOps",
-    tag: "Workflow Automation",
-    desc: "Automate repetitive operations across your tools with visual, no-code workflows.",
-    points: ["Drag-and-drop builder", "200+ integrations", "Real-time triggers"],
-  },
-  {
-    icon: LineChart,
-    name: "PulseCRM",
+    icon: Users,
+    name: "CRM",
     tag: "Customer Relationship",
     desc: "A CRM built for fast-moving sales teams — pipeline, outreach, and forecasting in one view.",
     points: ["Deal pipeline automation", "Built-in email sequencing", "Forecast accuracy scoring"],
   },
   {
-    icon: Wallet,
-    name: "LedgerIQ",
-    tag: "Finance & Billing",
-    desc: "Usage-based billing, invoicing, and financial reporting for subscription businesses.",
-    points: ["Automated invoicing", "Revenue recognition", "Multi-currency support"],
+    icon: Layers,
+    name: "ERP",
+    tag: "Enterprise Resource Planning",
+    desc: "Unify finance, inventory, procurement, and HR operations on one connected backbone.",
+    points: ["Multi-department workflows", "Real-time financial reporting", "Role-based access control"],
   },
   {
-    icon: Megaphone,
-    name: "SignalDesk",
-    tag: "Marketing Analytics",
-    desc: "Track campaign performance and customer journeys across every channel you run.",
-    points: ["Cross-channel attribution", "Real-time dashboards", "Custom audience segments"],
+    icon: Hospital,
+    name: "Hospital Management",
+    tag: "Healthcare",
+    desc: "End-to-end hospital operations — patient records, admissions, billing, and staff scheduling.",
+    points: ["Electronic health records", "Bed & ward management", "Insurance & billing workflows"],
+  },
+  {
+    icon: Stethoscope,
+    name: "Clinic Management",
+    tag: "Healthcare",
+    desc: "Appointment booking, patient history, and billing built for clinics and small practices.",
+    points: ["Online appointment booking", "Digital patient records", "Automated billing & reminders"],
   },
 ];
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
 
 function ProductCard({ p, i }) {
   const ref = useRef(null);
@@ -40,9 +42,11 @@ function ProductCard({ p, i }) {
   const y = useMotionValue(0.5);
   const rotateX = useSpring(useTransform(y, [0, 1], [6, -6]), { stiffness: 200, damping: 20 });
   const rotateY = useSpring(useTransform(x, [0, 1], [-6, 6]), { stiffness: 200, damping: 20 });
-  const Icon = p.icon;
+  
+  const Icon = p.icon || (p.name.includes("Hospital") ? Hospital : p.name.includes("Clinic") ? Stethoscope : p.name.includes("ERP") ? Layers : Users);
 
   const handleMove = (e) => {
+    if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     x.set((e.clientX - rect.left) / rect.width);
     y.set((e.clientY - rect.top) / rect.height);
@@ -72,20 +76,20 @@ function ProductCard({ p, i }) {
             <Icon size={22} />
           </span>
           <span className="font-mono text-[10px] uppercase tracking-wider text-violet-300 bg-violet-500/10 px-2.5 py-1 rounded-full">
-            {p.tag}
+            {p.tag || "Product"}
           </span>
         </div>
         <h3 className="mt-6 font-display text-2xl font-extrabold text-paper">{p.name}</h3>
-        <p className="mt-3 text-sm text-paper/55 leading-relaxed">{p.desc}</p>
+        <p className="mt-3 text-sm text-paper/55 leading-relaxed">{p.desc || p.description}</p>
         <ul className="mt-5 space-y-2 flex-1">
-          {p.points.map((pt) => (
+          {(p.points || []).map((pt) => (
             <li key={pt} className="flex items-center gap-2 text-xs text-paper/50">
               <CheckCircle2 size={13} className="text-violet-400 shrink-0" />
               {pt}
             </li>
           ))}
         </ul>
-        <Link to="/book-demo" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-violet-300 group-hover:text-violet-200">
+        <Link to="/products" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-violet-300 group-hover:text-violet-200">
           Explore {p.name}
           <ArrowUpRight size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
         </Link>
@@ -95,6 +99,19 @@ function ProductCard({ p, i }) {
 }
 
 export default function Products() {
+  const [products, setProducts] = useState(DEFAULT_PRODUCTS);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/products`)
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setProducts(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section id="products" className="relative bg-void py-24 lg:py-32 overflow-hidden">
       <div className="absolute inset-0 grid-fade opacity-30" />
@@ -115,8 +132,8 @@ export default function Products() {
           </p>
         </div>
         <div className="grid sm:grid-cols-2 gap-6">
-          {PRODUCTS.map((p, i) => (
-            <ProductCard p={p} i={i} key={p.name} />
+          {products.map((p, i) => (
+            <ProductCard p={p} i={i} key={p.id || p.name} />
           ))}
         </div>
       </div>

@@ -2,8 +2,19 @@ import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import { Link2, Camera, MessageCircle } from "lucide-react";
 
+const PRODUCT_LINKS = [
+  { label: "CRM", to: "/products" },
+  { label: "ERP", to: "/products" },
+  { label: "Hospital Management", to: "/products" },
+  { label: "Clinic Management", to: "/products" },
+  { label: "More →", to: "/products" },
+];
+
 const COLUMNS = [
-  { title: "Products", links: [{ label: "Products", to: "/products" }] },
+  {
+    title: "Products",
+    links: PRODUCT_LINKS,
+  },
   {
     title: "Company",
     links: [
@@ -66,7 +77,14 @@ export default function Footer() {
                 <ul className="space-y-2.5">
                   {col.links.map((l) => (
                     <li key={l.label}>
-                      <Link to={l.to} className="text-sm text-paper/55 hover:text-paper transition-colors">
+                      <Link
+                        to={l.to}
+                        className={`text-sm transition-colors ${
+                          l.label.includes("More")
+                            ? "font-semibold text-violet-400 hover:text-violet-300"
+                            : "text-paper/55 hover:text-paper"
+                        }`}
+                      >
                         {l.label}
                       </Link>
                     </li>

@@ -1,9 +1,28 @@
-const COMPANIES = [
+import { useState, useEffect } from "react";
+
+const DEFAULT_COMPANIES = [
   "Apollo Clinic", "XYZ Hospital", "ABC College", "DEF School", "GHI Clinic",
 ];
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
+
 export default function TrustedBy() {
-  const track = [...COMPANIES, ...COMPANIES];
+  const [companies, setCompanies] = useState(DEFAULT_COMPANIES);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/customers`)
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const names = data.map((c) => c.org).filter(Boolean);
+          if (names.length > 0) setCompanies(names);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const track = [...companies, ...companies, ...companies];
+
   return (
     <section className="relative bg-void border-y border-violet-500/10 py-10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 mb-6">

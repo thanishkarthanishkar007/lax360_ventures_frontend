@@ -252,3 +252,15 @@ React Router take over from there, so refreshing any route now works.
   smoothly expands a short one-line description with a fade + height
   animation, plus a small arrow indicator that slides in to signal the
   card is interactive.
+
+## Update log (Login/Signup + new product lineup)
+- **Login/Signup button** added next to Get Demo in the navbar (desktop
+  + mobile), linking to a new `/login` page (`LoginPage.jsx`) with an
+  animated Login/Sign Up toggle. **UI only** — no auth backend is wired
+  up yet; the form doesn't submit anywhere.
+- **Products replaced**: FlowOps/PulseCRM/LedgerIQ/SignalDesk are gone,
+  replaced with **CRM, ERP, Hospital Management, Clinic Management**
+  (`Products.jsx`). Every "Explore" link now goes to `/login` instead of
+  `/book-demo`.
+- Updated all other references to the old product names to match
+  (demo/contact form dropdowns, testimonials, Products page copy).

@@ -12,12 +12,62 @@ body {
   color: #FCFBFF;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.light body {
+  background-color: #F8F9FD;
+  color: #0F172A;
+}
+
+html.light .bg-void {
+  background-color: #F8F9FD !important;
+}
+
+html.light .bg-void\/95 {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+}
+
+html.light .text-paper {
+  color: #0F172A !important;
+}
+
+html.light .text-paper\/80 { color: rgba(15, 23, 42, 0.85) !important; }
+html.light .text-paper\/65 { color: rgba(15, 23, 42, 0.75) !important; }
+html.light .text-paper\/60 { color: rgba(15, 23, 42, 0.7) !important; }
+html.light .text-paper\/55 { color: rgba(15, 23, 42, 0.65) !important; }
+html.light .text-paper\/50 { color: rgba(15, 23, 42, 0.6) !important; }
+html.light .text-paper\/45 { color: rgba(15, 23, 42, 0.55) !important; }
+html.light .text-paper\/35 { color: rgba(15, 23, 42, 0.45) !important; }
+html.light .text-paper\/30 { color: rgba(15, 23, 42, 0.4) !important; }
+
+html.light .glass {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(139, 92, 246, 0.25) !important;
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.08);
+}
+
+html.light input, html.light select, html.light textarea {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+}
+
+html.light option {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+html.light footer {
+  background-color: #F1F5F9 !important;
+  border-top-color: rgba(139, 92, 246, 0.2) !important;
 }
 
 ::selection { background: #8B5CF6; color: #fff; }
 
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: #0A0714; }
+html.light ::-webkit-scrollbar-track { background: #F1F5F9; }
 ::-webkit-scrollbar-thumb { background: #3B1774; border-radius: 8px; }
 ::-webkit-scrollbar-thumb:hover { background: #8B5CF6; }
 

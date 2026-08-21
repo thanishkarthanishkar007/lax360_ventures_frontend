@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, ArrowUpRight, Send } from "lucide-react";
 
-const PRODUCT_OPTIONS = ["FlowOps", "PulseCRM", "LedgerIQ", "SignalDesk", "Full platform bundle"];
+const PRODUCT_OPTIONS = ["CRM", "ERP", "Hospital Management", "Clinic Management", "Full platform bundle"];
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", company: "", product: PRODUCT_OPTIONS[0] });

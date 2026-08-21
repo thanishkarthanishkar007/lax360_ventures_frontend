@@ -12,7 +12,7 @@ export default function ProductsPage() {
         <PageHeader
           eyebrow="Our products"
           title="One platform, four ways to grow."
-          description="FlowOps, PulseCRM, LedgerIQ, and SignalDesk — use one standalone, or combine all four on a shared data layer and login."
+          description="CRM, ERP, Hospital Management, and Clinic Management — use one standalone, or combine all four on a shared data layer and login."
         />
         <Products />
         <Statistics />

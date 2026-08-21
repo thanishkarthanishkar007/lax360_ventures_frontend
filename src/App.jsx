@@ -9,10 +9,10 @@ import ProductsPage from "./pages/ProductsPage";
 import IndustriesPage from "./pages/IndustriesPage";
 import TeamsPage from "./pages/TeamsPage";
 import CustomersPage from "./pages/CustomersPage";
+import LoginPage from "./pages/LoginPage";
+import AdminPage from "./pages/AdminPage";
+import { ThemeProvider } from "./context/ThemeContext";
 
-// Every nav item is its own route now (not an in-page anchor), so on each
-// navigation we align the new page under the fixed navbar with a smooth
-// scroll-to-top instead of carrying over the previous page's scroll offset.
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -28,7 +28,6 @@ export default function App() {
 
   const handleIntroComplete = () => {
     setIntroDone(true);
-    // Gate: land on the Book Demo form first; user proceeds to Home from there.
     if (location.pathname !== "/book-demo") {
       navigate("/book-demo", { replace: true });
     }
@@ -39,7 +38,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <ThemeProvider>
       <ScrollToTop />
       <Routes>
         <Route path="/book-demo" element={<BookDemoPage />} />
@@ -49,9 +48,11 @@ export default function App() {
         <Route path="/industries" element={<IndustriesPage />} />
         <Route path="/teams" element={<TeamsPage />} />
         <Route path="/customers" element={<CustomersPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
-    </>
+    </ThemeProvider>
   );
 }

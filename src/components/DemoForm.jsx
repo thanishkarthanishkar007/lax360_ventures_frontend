@@ -2,11 +2,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, Loader2 } from "lucide-react";
 
-const PRODUCT_OPTIONS = ["FlowOps", "PulseCRM", "LedgerIQ", "SignalDesk", "Full platform bundle"];
-// Defaults to the deployed backend so the production build works with zero
-// configuration. For local development, set VITE_API_BASE_URL=http://localhost:8080
-// in a .env file (see .env.example) to talk to your local Spring Boot server instead.
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://lax360-ventures-backend.onrender.com";
+const PRODUCT_OPTIONS = ["CRM", "ERP", "Hospital Management", "Clinic Management", "Full platform bundle", "Other"];
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
 
 export default function DemoForm({ onSubmitted }) {
   const [form, setForm] = useState({
@@ -16,6 +14,7 @@ export default function DemoForm({ onSubmitted }) {
     company: "",
     product: PRODUCT_OPTIONS[0],
   });
+  const [customRequirement, setCustomRequirement] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,6 +23,10 @@ export default function DemoForm({ onSubmitted }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.product === "Other" && !customRequirement.trim()) {
+      setError("Please type your requirement.");
+      return;
+    }
     setError("");
     setLoading(true);
     try {
@@ -36,14 +39,15 @@ export default function DemoForm({ onSubmitted }) {
           mobileNumber: form.mobile,
           company: form.company,
           product: form.product,
+          customRequirement: form.product === "Other" ? customRequirement.trim() : "",
         }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        throw new Error(data?.error || "Something went wrong. Please try again.");
+        throw new Error(data?.error || data?.message || "Something went wrong. Please try again.");
       }
       setSubmitted(true);
-      onSubmitted?.(form);
+      onSubmitted?.({ ...form, customRequirement });
     } catch (err) {
       setError(err.message || "Couldn't reach the server. Please try again.");
     } finally {
@@ -66,7 +70,7 @@ export default function DemoForm({ onSubmitted }) {
           <h3 className="font-display text-2xl font-extrabold text-paper">Request received</h3>
           <p className="mt-2 text-sm text-paper/55 max-w-xs">
             Thanks, {form.name.split(" ")[0] || "there"}! Our team will reach
-            out about {form.product} shortly.
+            out about {form.product === "Other" ? (customRequirement || "your requirement") : form.product} shortly.
           </p>
         </div>
       ) : (
@@ -148,6 +152,22 @@ export default function DemoForm({ onSubmitted }) {
                   </option>
                 ))}
               </select>
+
+              {form.product === "Other" && (
+                <div className="mt-4">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-paper/45 mb-2">
+                    Specify your requirement
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={customRequirement}
+                    onChange={(e) => setCustomRequirement(e.target.value)}
+                    className="w-full rounded-2xl bg-void border border-violet-500/20 px-5 py-4 text-sm text-paper placeholder:text-paper/30 focus:border-violet-400 focus:outline-none"
+                    placeholder="Enter your custom requirement details..."
+                  />
+                </div>
+              )}
             </div>
 
             {error && <p className="text-sm text-red-400 text-center">{error}</p>}
