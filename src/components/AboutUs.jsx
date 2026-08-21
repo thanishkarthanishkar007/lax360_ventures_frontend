@@ -77,7 +77,7 @@ export default function AboutUs() {
           <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div>
               <h3 className="font-display text-2xl font-extrabold text-paper">
-                6 years, 4 products, one platform.
+                Multiple products, one platform.
               </h3>
               <p className="mt-2 text-sm text-paper/60 max-w-md">
                 Every LAX360 Ventures product shares the same data layer
