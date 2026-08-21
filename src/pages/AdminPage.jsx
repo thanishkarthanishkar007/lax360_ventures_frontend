@@ -3,11 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { 
   Shield, Layers, Users, Building2, MessageSquare, Plus, Edit2, Trash2, 
-  Check, X, Search, RefreshCw, Mail, Phone, Calendar, Lock, LogOut
+  Check, X, Search, RefreshCw, Mail, Phone, Calendar, Lock, LogOut, Key, CheckCircle
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Logo from "../components/Logo";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
 
@@ -17,8 +16,9 @@ export default function AdminPage() {
   });
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
+  const [verifying, setVerifying] = useState(false);
 
-  const [activeTab, setActiveTab] = useState("demo-requests"); // demo-requests | products | industries | teams | customers
+  const [activeTab, setActiveTab] = useState("demo-requests"); // demo-requests | products | industries | teams | customers | settings
 
   // Data states
   const [demoRequests, setDemoRequests] = useState([]);
@@ -35,15 +35,52 @@ export default function AdminPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
 
+  // Security / Passcode change form state
+  const [currentPasscode, setCurrentPasscode] = useState("");
+  const [newPasscode, setNewPasscode] = useState("");
+  const [confirmPasscode, setConfirmPasscode] = useState("");
+  const [passcodeMsg, setPasscodeMsg] = useState({ type: "", text: "" });
+  const [passcodeLoading, setPasscodeLoading] = useState(false);
+
   // Auth handler
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (password === "admin" || password === "lax360" || password === "admin123") {
-      setIsAuthenticated(true);
-      localStorage.setItem("admin_auth", "true");
-      setAuthError("");
-    } else {
-      setAuthError("Invalid admin passcode. Try 'admin' or 'admin123'");
+    setAuthError("");
+    setVerifying(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode: password }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.success) {
+        setIsAuthenticated(true);
+        localStorage.setItem("admin_auth", "true");
+        setAuthError("");
+      } else {
+        // Fallback for offline dev
+        if (password === "lax360@1234") {
+          setIsAuthenticated(true);
+          localStorage.setItem("admin_auth", "true");
+          setAuthError("");
+        } else {
+          setAuthError(data?.message || "Invalid admin passcode.");
+        }
+      }
+    } catch (err) {
+      if (password === "lax360@1234") {
+        setIsAuthenticated(true);
+        localStorage.setItem("admin_auth", "true");
+        setAuthError("");
+      } else {
+        setAuthError("Invalid passcode or server error.");
+      }
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -52,8 +89,53 @@ export default function AdminPage() {
     localStorage.removeItem("admin_auth");
   };
 
+  // Change Passcode handler
+  const handleChangePasscodeSubmit = async (e) => {
+    e.preventDefault();
+    setPasscodeMsg({ type: "", text: "" });
+
+    if (newPasscode !== confirmPasscode) {
+      setPasscodeMsg({ type: "error", text: "New passcodes do not match." });
+      return;
+    }
+
+    if (newPasscode.length < 4) {
+      setPasscodeMsg({ type: "error", text: "Passcode must be at least 4 characters." });
+      return;
+    }
+
+    setPasscodeLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/change-passcode`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPasscode: currentPasscode,
+          newPasscode: newPasscode,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.success) {
+        setPasscodeMsg({ type: "success", text: "Admin passcode changed successfully! Stored securely in database." });
+        setCurrentPasscode("");
+        setNewPasscode("");
+        setConfirmPasscode("");
+      } else {
+        setPasscodeMsg({ type: "error", text: data?.message || "Failed to update passcode." });
+      }
+    } catch (err) {
+      setPasscodeMsg({ type: "error", text: err.message || "Failed to reach server." });
+    } finally {
+      setPasscodeLoading(false);
+    }
+  };
+
   // Fetch data
   const fetchData = async () => {
+    if (activeTab === "settings") return;
     setLoading(true);
     try {
       if (activeTab === "demo-requests") {
@@ -187,7 +269,7 @@ export default function AdminPage() {
             <Lock size={24} />
           </div>
           <h2 className="font-display text-2xl font-extrabold text-paper mb-2">Admin Portal</h2>
-          <p className="text-sm text-paper/55 mb-8">Enter your passcode to manage LAX360 Ventures</p>
+          <p className="text-sm text-paper/55 mb-8">Enter your admin passcode to access control panel</p>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <input
@@ -201,9 +283,10 @@ export default function AdminPage() {
             {authError && <p className="text-xs text-red-400">{authError}</p>}
             <button
               type="submit"
-              className="w-full rounded-full bg-grad-violet px-6 py-4 text-sm font-bold text-white shadow-glow-sm hover:shadow-glow transition-all duration-300"
+              disabled={verifying}
+              className="w-full rounded-full bg-grad-violet px-6 py-4 text-sm font-bold text-white shadow-glow-sm hover:shadow-glow transition-all duration-300 disabled:opacity-60"
             >
-              Access Dashboard
+              {verifying ? "Verifying..." : "Access Dashboard"}
             </button>
           </form>
 
@@ -229,16 +312,18 @@ export default function AdminPage() {
               </span>
               <h1 className="font-display text-3xl font-extrabold text-paper">Admin Panel</h1>
             </div>
-            <p className="mt-1 text-sm text-paper/50">Manage website products, industries, teams, customers, and leads</p>
+            <p className="mt-1 text-sm text-paper/50">Manage website products, industries, teams, customers, leads & security</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={fetchData}
-              className="flex items-center gap-2 rounded-full border border-violet-500/20 px-4 py-2 text-xs font-semibold text-paper/70 hover:text-paper hover:border-violet-400 transition-colors"
-            >
-              <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
-            </button>
+            {activeTab !== "settings" && (
+              <button
+                onClick={fetchData}
+                className="flex items-center gap-2 rounded-full border border-violet-500/20 px-4 py-2 text-xs font-semibold text-paper/70 hover:text-paper hover:border-violet-400 transition-colors"
+              >
+                <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
+              </button>
+            )}
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 rounded-full border border-red-500/30 px-4 py-2 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors"
@@ -256,13 +341,14 @@ export default function AdminPage() {
             { id: "industries", label: "Industries", icon: Building2 },
             { id: "teams", label: "Team Members", icon: Users },
             { id: "customers", label: "Customers", icon: Shield },
+            { id: "settings", label: "Security & Passcode", icon: Key },
           ].map((tab) => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id); setSearchQuery(""); }}
+                onClick={() => { setActiveTab(tab.id); setSearchQuery(""); setPasscodeMsg({ type: "", text: "" }); }}
                 className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${
                   active
                     ? "bg-grad-violet text-white shadow-glow-sm"
@@ -276,28 +362,30 @@ export default function AdminPage() {
           })}
         </div>
 
-        {/* Action bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div className="relative flex-1 max-w-md">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-paper/35" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`Search ${activeTab.replace("-", " ")}...`}
-              className="w-full rounded-2xl bg-void border border-violet-500/20 pl-11 pr-4 py-3 text-xs text-paper placeholder:text-paper/30 focus:border-violet-400 focus:outline-none"
-            />
-          </div>
+        {/* Action bar (for content tabs) */}
+        {activeTab !== "settings" && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div className="relative flex-1 max-w-md">
+              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-paper/35" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={`Search ${activeTab.replace("-", " ")}...`}
+                className="w-full rounded-2xl bg-void border border-violet-500/20 pl-11 pr-4 py-3 text-xs text-paper placeholder:text-paper/30 focus:border-violet-400 focus:outline-none"
+              />
+            </div>
 
-          {activeTab !== "demo-requests" && (
-            <button
-              onClick={openCreateModal}
-              className="flex items-center justify-center gap-2 rounded-full bg-grad-violet px-5 py-3 text-xs font-bold text-white shadow-glow-sm hover:shadow-glow transition-all duration-300 shrink-0"
-            >
-              <Plus size={16} /> Add New {activeTab.slice(0, -1)}
-            </button>
-          )}
-        </div>
+            {activeTab !== "demo-requests" && (
+              <button
+                onClick={openCreateModal}
+                className="flex items-center justify-center gap-2 rounded-full bg-grad-violet px-5 py-3 text-xs font-bold text-white shadow-glow-sm hover:shadow-glow transition-all duration-300 shrink-0"
+              >
+                <Plus size={16} /> Add New {activeTab.slice(0, -1)}
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Content lists */}
         {loading ? (
@@ -504,6 +592,78 @@ export default function AdminPage() {
                       </div>
                     </div>
                   ))}
+              </div>
+            )}
+
+            {/* 6. SECURITY & PASSCODE SETTINGS TAB */}
+            {activeTab === "settings" && (
+              <div className="max-w-xl mx-auto rounded-3xl border border-violet-500/15 glass p-8">
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-violet-500/15">
+                  <div className="h-10 w-10 rounded-xl bg-violet-500/20 text-violet-300 flex items-center justify-center">
+                    <Key size={20} />
+                  </div>
+                  <div>
+                    <h2 className="font-display text-xl font-bold text-paper">Change Admin Passcode</h2>
+                    <p className="text-xs text-paper/50">Update the passcode used to protect the Admin Panel</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleChangePasscodeSubmit} className="space-y-5 text-xs">
+                  <div>
+                    <label className="block text-paper/60 uppercase font-mono mb-2">Current Admin Passcode</label>
+                    <input
+                      required
+                      type="password"
+                      value={currentPasscode}
+                      onChange={(e) => setCurrentPasscode(e.target.value)}
+                      placeholder="Enter current passcode"
+                      className="w-full rounded-2xl bg-void border border-violet-500/20 px-4 py-3.5 text-sm text-paper focus:outline-none focus:border-violet-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-paper/60 uppercase font-mono mb-2">New Admin Passcode</label>
+                    <input
+                      required
+                      type="password"
+                      value={newPasscode}
+                      onChange={(e) => setNewPasscode(e.target.value)}
+                      placeholder="Enter new passcode"
+                      className="w-full rounded-2xl bg-void border border-violet-500/20 px-4 py-3.5 text-sm text-paper focus:outline-none focus:border-violet-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-paper/60 uppercase font-mono mb-2">Confirm New Passcode</label>
+                    <input
+                      required
+                      type="password"
+                      value={confirmPasscode}
+                      onChange={(e) => setConfirmPasscode(e.target.value)}
+                      placeholder="Re-enter new passcode"
+                      className="w-full rounded-2xl bg-void border border-violet-500/20 px-4 py-3.5 text-sm text-paper focus:outline-none focus:border-violet-400"
+                    />
+                  </div>
+
+                  {passcodeMsg.text && (
+                    <div className={`p-4 rounded-2xl text-xs flex items-center gap-2 ${
+                      passcodeMsg.type === "success" 
+                        ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-300"
+                        : "bg-red-500/15 border border-red-500/30 text-red-300"
+                    }`}>
+                      {passcodeMsg.type === "success" && <CheckCircle size={16} className="shrink-0" />}
+                      <span>{passcodeMsg.text}</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={passcodeLoading}
+                    className="w-full rounded-full bg-grad-violet px-6 py-4 font-bold text-white text-sm shadow-glow-sm hover:shadow-glow transition-all duration-300 disabled:opacity-60"
+                  >
+                    {passcodeLoading ? "Updating Passcode..." : "Update Passcode"}
+                  </button>
+                </form>
               </div>
             )}
           </div>

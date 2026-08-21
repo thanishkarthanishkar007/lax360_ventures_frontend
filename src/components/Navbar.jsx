@@ -13,7 +13,6 @@ const LINKS = [
   { to: "/teams", label: "Teams" },
   { to: "/customers", label: "Customers" },
   { to: "/contact", label: "Contact Us" },
-  { to: "/admin", label: "Admin" },
 ];
 
 export default function Navbar() {
@@ -73,12 +72,15 @@ export default function Navbar() {
           >
             {theme === "dark" ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-violet-600" />}
           </button>
+
           <Link
-            to="/login"
-            className="inline-flex items-center gap-2 rounded-full border border-violet-500/25 px-5 py-2.5 text-sm font-bold text-paper hover:border-violet-400 hover:text-violet-200 transition-all duration-300"
+            to="/admin"
+            className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 px-5 py-2.5 text-sm font-bold text-paper hover:border-violet-400 hover:text-violet-200 transition-all duration-300"
           >
-            Login / Signup
+            <Shield size={15} className="text-violet-400" />
+            Admin
           </Link>
+
           <Link
             to="/book-demo"
             className="inline-flex items-center gap-2 rounded-full bg-grad-violet px-5 py-2.5 text-sm font-bold text-white shadow-glow-sm hover:shadow-glow transition-all duration-300"
@@ -115,8 +117,8 @@ export default function Navbar() {
                   {l.label}
                 </Link>
               ))}
-              <Link to="/login" onClick={() => setOpen(false)} className="mt-2 inline-flex justify-center rounded-full border border-violet-500/25 px-5 py-3 text-sm font-bold text-paper">
-                Login / Signup
+              <Link to="/admin" onClick={() => setOpen(false)} className="mt-2 inline-flex justify-center items-center gap-2 rounded-full border border-violet-500/25 px-5 py-3 text-sm font-bold text-paper">
+                <Shield size={16} className="text-violet-400" /> Admin Panel
               </Link>
               <Link to="/book-demo" onClick={() => setOpen(false)} className="inline-flex justify-center rounded-full bg-grad-violet px-5 py-3 text-sm font-bold text-white">
                 Get Demo
