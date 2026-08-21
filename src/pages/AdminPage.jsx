@@ -18,6 +18,9 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState("");
   const [verifying, setVerifying] = useState(false);
 
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMsg, setForgotMsg] = useState({ type: "", text: "" });
+
   const [activeTab, setActiveTab] = useState("demo-requests"); // demo-requests | products | industries | teams | customers | settings
 
   // Data states
@@ -89,9 +92,42 @@ export default function AdminPage() {
     }
   };
 
+  const handleForgotPasscode = async () => {
+    setForgotMsg({ type: "", text: "" });
+    setForgotLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/forgot-passcode`, {
+        method: "POST",
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.success) {
+        setForgotMsg({
+          type: "success",
+          text: data.message || "Passcode sent to registered admin email address.",
+        });
+      } else {
+        setForgotMsg({
+          type: "error",
+          text: data?.message || "Failed to send email notification.",
+        });
+      }
+    } catch (err) {
+      setForgotMsg({
+        type: "error",
+        text: "Failed to connect to backend server.",
+      });
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     setPassword("");
+    setForgotMsg({ type: "", text: "" });
   };
 
   // Change Passcode handler
@@ -297,6 +333,28 @@ export default function AdminPage() {
                 {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+
+            <div className="flex items-center justify-end text-xs pt-1">
+              <button
+                type="button"
+                onClick={handleForgotPasscode}
+                disabled={forgotLoading}
+                className="text-violet-400 hover:text-violet-300 font-semibold transition-colors disabled:opacity-50"
+              >
+                {forgotLoading ? "Sending passcode..." : "Forgot Passcode?"}
+              </button>
+            </div>
+
+            {forgotMsg.text && (
+              <div className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
+                forgotMsg.type === "success" 
+                  ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-300"
+                  : "bg-red-500/15 border border-red-500/30 text-red-300"
+              }`}>
+                {forgotMsg.type === "success" && <CheckCircle size={14} className="shrink-0" />}
+                <span>{forgotMsg.text}</span>
+              </div>
+            )}
 
             {authError && <p className="text-xs text-red-400">{authError}</p>}
             

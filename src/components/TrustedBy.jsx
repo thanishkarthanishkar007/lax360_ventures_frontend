@@ -31,13 +31,13 @@ export default function TrustedBy() {
         </p>
       </div>
       <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-void to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-void to-transparent z-10" />
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-void-fade to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-void-fade to-transparent z-10" />
         <div className="flex gap-16 w-max animate-marquee">
           {track.map((name, i) => (
             <span
               key={i}
-              className="font-display text-xl sm:text-2xl font-bold text-paper/25 whitespace-nowrap tracking-tight hover:text-violet-300/60 transition-colors"
+              className="font-display text-xl sm:text-2xl font-bold text-paper/25 whitespace-nowrap tracking-tight hover:text-violet-300 transition-colors"
             >
               {name}
             </span>
