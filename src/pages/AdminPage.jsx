@@ -396,14 +396,14 @@ export default function AdminPage() {
             {activeTab !== "settings" && (
               <button
                 onClick={fetchData}
-                className="flex items-center gap-2 rounded-full border border-violet-500/20 px-4 py-2 text-xs font-semibold text-paper/70 hover:text-paper hover:border-violet-400 transition-colors"
+                className="flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-xs font-bold text-violet-300 dark:text-violet-300 hover:border-violet-400 hover:bg-violet-500/20 transition-colors shadow-sm"
               >
                 <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
               </button>
             )}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 rounded-full border border-red-500/30 px-4 py-2 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors"
+              className="flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs font-bold text-red-500 dark:text-red-400 hover:bg-red-500/20 transition-colors"
             >
               <LogOut size={14} /> Exit Admin
             </button>
