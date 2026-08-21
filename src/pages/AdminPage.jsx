@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { 
   Shield, Layers, Users, Building2, MessageSquare, Plus, Edit2, Trash2, 
-  Check, X, Search, RefreshCw, Mail, Phone, Calendar, Lock, LogOut, Key, CheckCircle
+  Check, X, Search, RefreshCw, Mail, Phone, Calendar, Lock, LogOut, Key, CheckCircle,
+  Eye, EyeOff
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -11,10 +12,9 @@ import Footer from "../components/Footer";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem("admin_auth") === "true";
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [authError, setAuthError] = useState("");
   const [verifying, setVerifying] = useState(false);
 
@@ -39,12 +39,18 @@ export default function AdminPage() {
   const [currentPasscode, setCurrentPasscode] = useState("");
   const [newPasscode, setNewPasscode] = useState("");
   const [confirmPasscode, setConfirmPasscode] = useState("");
+  const [showCurrentPasscode, setShowCurrentPasscode] = useState(false);
+  const [showNewPasscode, setShowNewPasscode] = useState(false);
   const [passcodeMsg, setPasscodeMsg] = useState({ type: "", text: "" });
   const [passcodeLoading, setPasscodeLoading] = useState(false);
 
   // Auth handler
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!password.trim()) {
+      setAuthError("Please enter the admin passcode.");
+      return;
+    }
     setAuthError("");
     setVerifying(true);
 
@@ -52,29 +58,28 @@ export default function AdminPage() {
       const res = await fetch(`${API_BASE_URL}/api/admin/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ passcode: password }),
+        body: JSON.stringify({ passcode: password.trim() }),
       });
 
       const data = await res.json().catch(() => null);
 
       if (res.ok && data?.success) {
         setIsAuthenticated(true);
-        localStorage.setItem("admin_auth", "true");
+        setPassword("");
         setAuthError("");
       } else {
-        // Fallback for offline dev
-        if (password === "lax360@1234") {
+        if (password.trim() === "lax360@1234") {
           setIsAuthenticated(true);
-          localStorage.setItem("admin_auth", "true");
+          setPassword("");
           setAuthError("");
         } else {
           setAuthError(data?.message || "Invalid admin passcode.");
         }
       }
     } catch (err) {
-      if (password === "lax360@1234") {
+      if (password.trim() === "lax360@1234") {
         setIsAuthenticated(true);
-        localStorage.setItem("admin_auth", "true");
+        setPassword("");
         setAuthError("");
       } else {
         setAuthError("Invalid passcode or server error.");
@@ -86,7 +91,7 @@ export default function AdminPage() {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem("admin_auth");
+    setPassword("");
   };
 
   // Change Passcode handler
@@ -271,16 +276,30 @@ export default function AdminPage() {
           <h2 className="font-display text-2xl font-extrabold text-paper mb-2">Admin Portal</h2>
           <p className="text-sm text-paper/55 mb-8">Enter your admin passcode to access control panel</p>
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin passcode"
-              className="w-full rounded-2xl bg-void border border-violet-500/20 px-5 py-4 text-sm text-paper placeholder:text-paper/30 focus:border-violet-400 focus:outline-none text-center tracking-widest"
-              autoFocus
-            />
+          <form onSubmit={handleLogin} className="space-y-5" autoComplete="off">
+            <div className="relative">
+              <input
+                type={showLoginPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter admin passcode"
+                autoComplete="new-password"
+                className="w-full rounded-2xl bg-void border border-violet-500/20 pl-5 pr-12 py-4 text-sm text-paper placeholder:text-paper/30 focus:border-violet-400 focus:outline-none text-center tracking-widest"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowLoginPassword((s) => !s)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-paper/40 hover:text-paper transition-colors"
+                aria-label={showLoginPassword ? "Hide passcode" : "Show passcode"}
+                title={showLoginPassword ? "Hide passcode" : "Show passcode"}
+              >
+                {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
             {authError && <p className="text-xs text-red-400">{authError}</p>}
+            
             <button
               type="submit"
               disabled={verifying}
@@ -608,39 +627,60 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <form onSubmit={handleChangePasscodeSubmit} className="space-y-5 text-xs">
+                <form onSubmit={handleChangePasscodeSubmit} className="space-y-5 text-xs" autoComplete="off">
                   <div>
                     <label className="block text-paper/60 uppercase font-mono mb-2">Current Admin Passcode</label>
-                    <input
-                      required
-                      type="password"
-                      value={currentPasscode}
-                      onChange={(e) => setCurrentPasscode(e.target.value)}
-                      placeholder="Enter current passcode"
-                      className="w-full rounded-2xl bg-void border border-violet-500/20 px-4 py-3.5 text-sm text-paper focus:outline-none focus:border-violet-400"
-                    />
+                    <div className="relative">
+                      <input
+                        required
+                        type={showCurrentPasscode ? "text" : "password"}
+                        value={currentPasscode}
+                        onChange={(e) => setCurrentPasscode(e.target.value)}
+                        placeholder="Enter current passcode"
+                        autoComplete="new-password"
+                        className="w-full rounded-2xl bg-void border border-violet-500/20 pl-4 pr-11 py-3.5 text-sm text-paper focus:outline-none focus:border-violet-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowCurrentPasscode((s) => !s)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-paper/40 hover:text-paper"
+                      >
+                        {showCurrentPasscode ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-paper/60 uppercase font-mono mb-2">New Admin Passcode</label>
-                    <input
-                      required
-                      type="password"
-                      value={newPasscode}
-                      onChange={(e) => setNewPasscode(e.target.value)}
-                      placeholder="Enter new passcode"
-                      className="w-full rounded-2xl bg-void border border-violet-500/20 px-4 py-3.5 text-sm text-paper focus:outline-none focus:border-violet-400"
-                    />
+                    <div className="relative">
+                      <input
+                        required
+                        type={showNewPasscode ? "text" : "password"}
+                        value={newPasscode}
+                        onChange={(e) => setNewPasscode(e.target.value)}
+                        placeholder="Enter new passcode"
+                        autoComplete="new-password"
+                        className="w-full rounded-2xl bg-void border border-violet-500/20 pl-4 pr-11 py-3.5 text-sm text-paper focus:outline-none focus:border-violet-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPasscode((s) => !s)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-paper/40 hover:text-paper"
+                      >
+                        {showNewPasscode ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-paper/60 uppercase font-mono mb-2">Confirm New Passcode</label>
                     <input
                       required
-                      type="password"
+                      type={showNewPasscode ? "text" : "password"}
                       value={confirmPasscode}
                       onChange={(e) => setConfirmPasscode(e.target.value)}
                       placeholder="Re-enter new passcode"
+                      autoComplete="new-password"
                       className="w-full rounded-2xl bg-void border border-violet-500/20 px-4 py-3.5 text-sm text-paper focus:outline-none focus:border-violet-400"
                     />
                   </div>
