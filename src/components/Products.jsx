@@ -113,7 +113,7 @@ export default function Products() {
   }, []);
 
   return (
-    <section id="products" className="relative bg-void py-24 lg:py-32 overflow-hidden">
+    <section id="products" className="relative bg-void py-24 lg:py-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
       <div className="absolute inset-0 grid-fade opacity-30" />
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">

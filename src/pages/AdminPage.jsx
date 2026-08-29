@@ -379,7 +379,7 @@ export default function AdminPage() {
     <div className="bg-void min-h-screen text-paper">
       <Navbar />
 
-      <main className="pt-28 pb-20 max-w-7xl mx-auto px-6 lg:px-10">
+      <main className="pt-36 pb-20 sm:pt-40 lg:pt-44 max-w-7xl mx-auto px-6 lg:px-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 pb-6 border-b border-violet-500/15">
           <div>

@@ -17,7 +17,7 @@ const STATEMENTS = [
 
 export default function AboutUs() {
   return (
-    <section id="about" className="relative bg-paper text-void py-24 lg:py-32">
+    <section id="about" className="relative bg-paper text-void py-24 lg:py-32 scroll-mt-28 lg:scroll-mt-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

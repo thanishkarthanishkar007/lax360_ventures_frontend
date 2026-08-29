@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function PageHeader({ eyebrow, title, description }) {
   return (
-    <section className="relative pt-40 pb-16 lg:pt-48 lg:pb-20 overflow-hidden">
+    <section className="relative pt-44 pb-16 sm:pt-48 sm:pb-20 lg:pt-52 lg:pb-24 overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-void">
         <div className="absolute inset-0 bg-violet-glow" />
         <div className="absolute inset-0 grid-fade opacity-40" />

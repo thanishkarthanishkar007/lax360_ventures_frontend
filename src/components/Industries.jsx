@@ -91,7 +91,7 @@ export default function Industries() {
   }, []);
 
   return (
-    <section id="industries" className="relative bg-void py-24 lg:py-32 overflow-hidden">
+    <section id="industries" className="relative bg-void py-24 lg:py-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
       <div className="absolute inset-0 bg-violet-glow opacity-50" />
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative">
         <div className="max-w-2xl mb-14">

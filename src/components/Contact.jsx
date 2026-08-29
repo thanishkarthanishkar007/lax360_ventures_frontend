@@ -15,7 +15,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative bg-void py-24 lg:py-32 overflow-hidden">
+    <section id="contact" className="relative bg-void py-24 lg:py-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
       <div className="absolute inset-0 bg-violet-glow opacity-60" />
 
       {/* CTA banner */}

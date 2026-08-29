@@ -5,7 +5,7 @@ import HologramLogo from "./HologramLogo";
 
 export default function Hero() {
   return (
-    <section id="home" className="relative pt-40 pb-24 lg:pt-48 lg:pb-28 overflow-hidden">
+    <section id="home" className="relative pt-44 pb-24 sm:pt-48 lg:pt-56 lg:pb-28 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
       <div className="absolute inset-0 -z-10 bg-void overflow-hidden">
         <video
           autoPlay
