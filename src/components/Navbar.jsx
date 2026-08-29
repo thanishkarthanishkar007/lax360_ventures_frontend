@@ -28,12 +28,12 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? "py-2" : "py-4"}`}>
-      <nav
-        className={`max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-8 rounded-full bg-void/95 backdrop-blur-xl border border-violet-500/15 transition-all duration-300 ${
-          scrolled ? "mx-4 lg:mx-auto py-2.5" : "py-3"
-        }`}
-      >
+    <header
+      className={`fixed top-0 inset-x-0 w-full z-50 bg-void/95 backdrop-blur-xl border-b border-violet-500/15 transition-all duration-300 ${
+        scrolled ? "shadow-lg shadow-void/50" : ""
+      }`}
+    >
+      <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 py-3.5 lg:py-4">
         <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
           <Logo className="h-9 w-9" />
           <div className="leading-none">
@@ -46,14 +46,14 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <div className="hidden lg:flex items-center gap-0.5">
+        <div className="hidden lg:flex items-center gap-1">
           {LINKS.map((l) => {
             const active = location.pathname === l.to;
             return (
               <Link
                 key={l.to}
                 to={l.to}
-                className={`relative px-3.5 py-2 text-sm font-medium rounded-full transition-colors ${
+                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                   active ? "text-paper bg-violet-500/15" : "text-paper/65 hover:text-paper"
                 }`}
               >
@@ -110,9 +110,9 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden overflow-hidden mx-4 mt-2 rounded-3xl glass border border-violet-500/15"
+            className="lg:hidden overflow-hidden border-t border-violet-500/15 bg-void/95 backdrop-blur-xl"
           >
-            <div className="flex flex-col px-6 py-5 gap-4">
+            <div className="flex flex-col px-6 py-5 gap-4 max-w-7xl mx-auto">
               {LINKS.map((l) => (
                 <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="text-base font-semibold text-paper/80 hover:text-paper">
                   {l.label}
