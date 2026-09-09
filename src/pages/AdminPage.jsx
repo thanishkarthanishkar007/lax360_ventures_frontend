@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { 
@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import heroVideo from "../assets/videos/hero-bg.mp4";
 import previewRestaurant from "../assets/images/preview-restaurant.png";
 import previewJewellery from "../assets/images/preview-jewellery.png";
 import previewGym from "../assets/images/preview-gym.png";
@@ -387,16 +388,53 @@ export default function AdminPage() {
     setIsModalOpen(true);
   };
 
+  const loginVideoRef = useRef(null);
+
+  useEffect(() => {
+    if (!isAuthenticated && loginVideoRef.current) {
+      const video = loginVideoRef.current;
+      video.defaultMuted = true;
+      video.muted = true;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
+  }, [isAuthenticated]);
+
   // Auth gate render
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-void flex items-center justify-center px-6 py-16">
-        <div className="w-full max-w-md rounded-3xl border border-violet-500/20 glass p-8 sm:p-10 text-center">
+      <div className="min-h-screen bg-void flex items-center justify-center px-6 py-16 relative overflow-hidden">
+        {/* Background Video Layer matching Website Hero section */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <video
+            ref={loginVideoRef}
+            src={heroVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover opacity-85 dark:opacity-90"
+          />
+          {/* Ambient overlays so passcode card stands out crisply */}
+          <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-void/70 pointer-events-none" />
+          <div className="absolute inset-0 grid-fade opacity-30 pointer-events-none" />
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md rounded-3xl border border-violet-500/25 glass p-8 sm:p-10 text-center relative z-10 shadow-[0_0_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl"
+        >
           <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-grad-violet text-white shadow-glow-sm">
             <Lock size={24} />
           </div>
           <h2 className="font-display text-2xl font-extrabold text-paper mb-2">Admin Portal</h2>
-          <p className="text-sm text-paper/55 mb-8">Enter your admin passcode to access control panel</p>
+          <p className="text-sm text-paper/60 mb-8">Enter your admin passcode to access control panel</p>
 
           <form onSubmit={handleLogin} className="space-y-5" autoComplete="off">
             <div className="relative">
@@ -406,7 +444,7 @@ export default function AdminPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter admin passcode"
                 autoComplete="new-password"
-                className="w-full rounded-2xl bg-void border border-violet-500/20 pl-5 pr-12 py-4 text-sm text-paper placeholder:text-paper/30 focus:border-violet-400 focus:outline-none text-center tracking-widest"
+                className="w-full rounded-2xl bg-void/90 border border-violet-500/30 pl-5 pr-12 py-4 text-sm text-paper placeholder:text-paper/40 focus:border-violet-400 focus:outline-none text-center tracking-widest backdrop-blur-md"
                 autoFocus
               />
               <button
@@ -442,21 +480,21 @@ export default function AdminPage() {
               </div>
             )}
 
-            {authError && <p className="text-xs text-red-400">{authError}</p>}
+            {authError && <p className="text-xs text-red-400 font-medium">{authError}</p>}
             
             <button
               type="submit"
               disabled={verifying}
-              className="w-full rounded-full bg-grad-violet px-6 py-4 text-sm font-bold text-white shadow-glow-sm hover:shadow-glow transition-all duration-300 disabled:opacity-60"
+              className="w-full rounded-full bg-grad-violet px-6 py-4 text-sm font-bold text-white shadow-glow-sm hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-60"
             >
               {verifying ? "Verifying..." : "Access Dashboard"}
             </button>
           </form>
 
-          <Link to="/" className="inline-block mt-6 text-xs text-paper/40 hover:text-paper">
+          <Link to="/" className="inline-block mt-6 text-xs text-paper/50 hover:text-paper transition-colors">
             ← Back to Website
           </Link>
-        </div>
+        </motion.div>
       </div>
     );
   }
