@@ -22,18 +22,21 @@ function ScrollToTop() {
 }
 
 export default function App() {
-  const [introDone, setIntroDone] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // If opening /admin or a specific subpage directly via URL, skip intro and do not redirect
+  const shouldSkipIntro = location.pathname !== "/" && location.pathname !== "";
+  const [introDone, setIntroDone] = useState(shouldSkipIntro);
 
   const handleIntroComplete = () => {
     setIntroDone(true);
-    if (location.pathname !== "/book-demo") {
+    if (location.pathname === "/") {
       navigate("/book-demo", { replace: true });
     }
   };
 
-  if (!introDone) {
+  if (!introDone && !shouldSkipIntro) {
     return <CinematicIntro onComplete={handleIntroComplete} />;
   }
 
@@ -41,6 +44,7 @@ export default function App() {
     <ThemeProvider>
       <ScrollToTop />
       <Routes>
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/book-demo" element={<BookDemoPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
@@ -49,7 +53,6 @@ export default function App() {
         <Route path="/teams" element={<TeamsPage />} />
         <Route path="/customers" element={<CustomersPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin" element={<AdminPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
