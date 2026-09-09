@@ -20,7 +20,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="home" className="relative pt-44 pb-24 sm:pt-48 lg:pt-56 lg:pb-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
+    <section id="home" className="relative pt-32 pb-24 sm:pt-36 lg:pt-40 lg:pb-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
       {/* Background Video Layer - z-0 with z-10 content on top */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
