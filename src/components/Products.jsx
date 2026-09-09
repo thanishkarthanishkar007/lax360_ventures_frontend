@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
-import previewRestaurant from "../assets/images/preview-restaurant.jpg";
-import previewJewellery from "../assets/images/preview-jewellery.jpg";
-import previewGym from "../assets/images/preview-gym.jpg";
-import previewTextiles from "../assets/images/preview-textiles.jpg";
+import previewRestaurant from "../assets/images/preview-restaurant.png";
+import previewJewellery from "../assets/images/preview-jewellery.png";
+import previewGym from "../assets/images/preview-gym.png";
+import previewTextiles from "../assets/images/preview-textiles.png";
 
 function GithubIcon(props) {
   return (
