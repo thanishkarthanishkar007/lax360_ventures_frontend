@@ -7,28 +7,42 @@ export default function Hero() {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.defaultMuted = true;
-      videoRef.current.muted = true;
-      videoRef.current.play().catch(() => {});
-    }
+    const playVideo = () => {
+      if (videoRef.current) {
+        videoRef.current.defaultMuted = true;
+        videoRef.current.muted = true;
+        const promise = videoRef.current.play();
+        if (promise !== undefined) {
+          promise.catch(() => {});
+        }
+      }
+    };
+    playVideo();
   }, []);
 
   return (
     <section id="home" className="relative pt-44 pb-24 sm:pt-48 lg:pt-56 lg:pb-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
-      <div className="absolute inset-0 -z-10 bg-void overflow-hidden pointer-events-none">
+      {/* Background Video Container */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none hero-bg-container">
         <video
           ref={videoRef}
+          src="/videos/hero-bg.mp4"
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 h-full w-full object-cover opacity-85"
+          preload="auto"
+          onLoadedMetadata={() => {
+            if (videoRef.current) {
+              videoRef.current.play().catch(() => {});
+            }
+          }}
+          className="hero-video-el absolute inset-0 h-full w-full object-cover opacity-90 transition-opacity duration-300"
         >
           <source src="/videos/hero-bg.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-void/25" />
-        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-void to-transparent" />
+        <div className="absolute inset-0 bg-black/20 dark:bg-void/25 pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-void-fade to-transparent pointer-events-none" />
       </div>
 
       <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center flex flex-col items-center relative z-10">

@@ -65,6 +65,19 @@ html.light .border-violet-500\/10 { border-color: rgba(124, 58, 237, 0.20) !impo
 html.light .from-void-fade { --tw-gradient-from: #F8F9FD var(--tw-gradient-from-position) !important; }
 .from-void-fade { --tw-gradient-from: #0A0714 var(--tw-gradient-from-position); }
 
+.hero-bg-container {
+  background-color: #0A0714;
+}
+
+html.light .hero-bg-container {
+  background-color: transparent !important;
+}
+
+html.light .hero-video-el {
+  opacity: 0.85 !important;
+  filter: contrast(1.15) brightness(1.05);
+}
+
 html.light .glass {
   background: rgba(255, 255, 255, 0.90) !important;
   border-color: rgba(124, 58, 237, 0.25) !important;
