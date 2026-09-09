@@ -2,7 +2,14 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, Loader2 } from "lucide-react";
 
-const PRODUCT_OPTIONS = ["CRM", "ERP", "Hospital Management", "Clinic Management", "Full platform bundle", "Other"];
+const PRODUCT_OPTIONS = [
+  "Restaurants – 3D Animated Web",
+  "Jewellery – Animated Web",
+  "Gym – Cursor Interactive Web",
+  "Textiles – Scrolling Web",
+  "Custom Project",
+  "Other"
+];
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
 

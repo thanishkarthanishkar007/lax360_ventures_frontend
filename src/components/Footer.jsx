@@ -3,11 +3,10 @@ import Logo from "./Logo";
 import { Link2, Camera, MessageCircle } from "lucide-react";
 
 const PRODUCT_LINKS = [
-  { label: "CRM", to: "/products" },
-  { label: "ERP", to: "/products" },
-  { label: "Hospital Management", to: "/products" },
-  { label: "Clinic Management", to: "/products" },
-  { label: "More →", to: "/products" },
+  { label: "Restaurants – 3D Web", to: "/products" },
+  { label: "Jewellery – Animated Web", to: "/products" },
+  { label: "Gym – Cursor Interactive", to: "/products" },
+  { label: "Textiles – Scrolling Web", to: "/products" },
 ];
 
 const COLUMNS = [

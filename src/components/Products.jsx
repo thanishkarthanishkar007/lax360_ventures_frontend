@@ -1,139 +1,159 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Users, Layers, Hospital, Stethoscope, ArrowUpRight, CheckCircle2, Box } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import previewRestaurant from "../assets/images/preview-restaurant.jpg";
+import previewJewellery from "../assets/images/preview-jewellery.jpg";
+import previewGym from "../assets/images/preview-gym.jpg";
+import previewTextiles from "../assets/images/preview-textiles.jpg";
 
-const DEFAULT_PRODUCTS = [
+function GithubIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+      <path d="M9 18c-4.51 2-5-2-7-2" />
+    </svg>
+  );
+}
+
+const PRODUCTS = [
   {
-    icon: Users,
-    name: "CRM",
-    tag: "Customer Relationship",
-    desc: "A CRM built for fast-moving sales teams — pipeline, outreach, and forecasting in one view.",
-    points: ["Deal pipeline automation", "Built-in email sequencing", "Forecast accuracy scoring"],
+    id: "1",
+    name: "Restaurants – 3D Animated Web",
+    tag: "3D Animated Web",
+    slug: "food-hotel-demo-web.vercel.app",
+    liveUrl: "https://food-hotel-demo-web.vercel.app/?utm_source=chatgpt.com",
+    index: "#1",
+    image: previewRestaurant,
   },
   {
-    icon: Layers,
-    name: "ERP",
-    tag: "Enterprise Resource Planning",
-    desc: "Unify finance, inventory, procurement, and HR operations on one connected backbone.",
-    points: ["Multi-department workflows", "Real-time financial reporting", "Role-based access control"],
+    id: "2",
+    name: "Jewellery – Animated Web",
+    tag: "Animated Web",
+    slug: "jewellery-web-demo-five.vercel.app",
+    liveUrl: "https://jewellery-web-demo-five.vercel.app/?utm_source=chatgpt.com",
+    index: "#2",
+    image: previewJewellery,
   },
   {
-    icon: Hospital,
-    name: "Hospital Management",
-    tag: "Healthcare",
-    desc: "End-to-end hospital operations — patient records, admissions, billing, and staff scheduling.",
-    points: ["Electronic health records", "Bed & ward management", "Insurance & billing workflows"],
+    id: "3",
+    name: "Gym – Cursor Interactive Web",
+    tag: "Cursor Interactive Web",
+    slug: "gym-web-nine-phi.vercel.app",
+    liveUrl: "https://gym-web-nine-phi.vercel.app/?utm_source=chatgpt.com",
+    index: "#3",
+    image: previewGym,
   },
   {
-    icon: Stethoscope,
-    name: "Clinic Management",
-    tag: "Healthcare",
-    desc: "Appointment booking, patient history, and billing built for clinics and small practices.",
-    points: ["Online appointment booking", "Digital patient records", "Automated billing & reminders"],
+    id: "4",
+    name: "Textiles – Scrolling Web",
+    tag: "Scrolling Web",
+    slug: "textiles-web.vercel.app",
+    liveUrl: "https://textiles-web.vercel.app/?utm_source=chatgpt.com",
+    index: "#4",
+    image: previewTextiles,
   },
 ];
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
-
-function ProductCard({ p, i }) {
-  const ref = useRef(null);
-  const x = useMotionValue(0.5);
-  const y = useMotionValue(0.5);
-  const rotateX = useSpring(useTransform(y, [0, 1], [6, -6]), { stiffness: 200, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [0, 1], [-6, 6]), { stiffness: 200, damping: 20 });
-  
-  const Icon = p.icon || (p.name.includes("Hospital") ? Hospital : p.name.includes("Clinic") ? Stethoscope : p.name.includes("ERP") ? Layers : Users);
-
-  const handleMove = (e) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    x.set((e.clientX - rect.left) / rect.width);
-    y.set((e.clientY - rect.top) / rect.height);
-  };
-  const reset = () => {
-    x.set(0.5);
-    y.set(0.5);
-  };
-
+function ProductBrowserCard({ p, i }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: i * 0.08 }}
-      className="perspective"
+      transition={{ duration: 0.5, delay: i * 0.1 }}
+      className="group rounded-2xl border border-violet-500/20 bg-void-soft/80 backdrop-blur-md overflow-hidden flex flex-col hover:border-violet-500/40 hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] transition-all duration-300"
     >
-      <motion.div
-        ref={ref}
-        onMouseMove={handleMove}
-        onMouseLeave={reset}
-        style={{ rotateX, rotateY }}
-        className="preserve-3d group relative rounded-3xl border border-violet-500/15 glass p-8 h-full flex flex-col hover:border-violet-400/50 transition-colors duration-300"
-      >
-        <div className="flex items-start justify-between">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-grad-violet text-white shadow-glow-sm group-hover:scale-110 transition-transform duration-300">
-            <Icon size={22} />
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-violet-300 bg-violet-500/10 px-2.5 py-1 rounded-full">
-            {p.tag || "Product"}
-          </span>
+      {/* Top Browser Header Bar */}
+      <div className="flex items-center justify-between px-4 py-3 bg-white/[0.03] border-b border-violet-500/10">
+        {/* Mac colored window controls */}
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] shadow-sm" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] shadow-sm" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] shadow-sm" />
         </div>
-        <h3 className="mt-6 font-display text-2xl font-extrabold text-paper">{p.name}</h3>
-        <p className="mt-3 text-sm text-paper/55 leading-relaxed">{p.desc || p.description}</p>
-        <ul className="mt-5 space-y-2 flex-1">
-          {(p.points || []).map((pt) => (
-            <li key={pt} className="flex items-center gap-2 text-xs text-paper/50">
-              <CheckCircle2 size={13} className="text-violet-400 shrink-0" />
-              {pt}
-            </li>
-          ))}
-        </ul>
-        <Link to="/products" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-violet-300 group-hover:text-violet-200">
-          Explore {p.name}
-          <ArrowUpRight size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-        </Link>
-      </motion.div>
+
+        {/* Center URL slug pill */}
+        <div className="px-3 py-0.5 rounded-md bg-white/5 border border-white/10 text-[11px] font-mono text-paper/60 truncate max-w-[200px]">
+          {p.slug}
+        </div>
+
+        {/* Index badge */}
+        <span className="text-xs font-mono font-bold text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/20">
+          {p.index}
+        </span>
+      </div>
+
+      {/* Website Preview Container */}
+      <div className="relative aspect-[16/10] overflow-hidden bg-black/50">
+        <img
+          src={p.image}
+          alt={p.name}
+          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-void-soft/90 via-transparent to-transparent opacity-40 pointer-events-none" />
+      </div>
+
+      {/* Card Content & Action Buttons */}
+      <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between bg-white/[0.01]">
+        <div>
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-violet-400 mb-1.5 block">
+            {p.tag}
+          </span>
+          <h3 className="font-display text-xl font-bold text-paper leading-snug">
+            {p.name}
+          </h3>
+        </div>
+
+        <div className="flex items-center gap-3 pt-5 mt-auto">
+          {/* GitHub Button - opens Demo Request Form */}
+          <Link
+            to="/book-demo"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-violet-500/30 bg-white/5 hover:bg-violet-500/15 text-xs font-bold text-paper hover:text-white transition-all duration-200"
+          >
+            <GithubIcon className="text-paper/80" />
+            GitHub
+          </Link>
+
+          {/* Live Demo Button - opens live URL */}
+          <a
+            href={p.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-grad-violet text-white text-xs font-bold shadow-glow-sm hover:shadow-glow hover:-translate-y-0.5 transition-all duration-200"
+          >
+            Live Demo
+            <ExternalLink size={14} />
+          </a>
+        </div>
+      </div>
     </motion.div>
   );
 }
 
 export default function Products() {
-  const [products, setProducts] = useState(DEFAULT_PRODUCTS);
-
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/api/products`)
-      .then((res) => res.ok ? res.json() : null)
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setProducts(data);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
   return (
     <section id="products" className="relative bg-void py-24 lg:py-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
-      <div className="absolute inset-0 grid-fade opacity-30" />
+      <div className="absolute inset-0 grid-fade opacity-30 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-6 lg:px-10 relative">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div>
             <p className="font-mono text-xs tracking-[0.3em] text-violet-300 uppercase mb-4">
-              Product suite
+              Featured Products
             </p>
             <h2 className="font-display text-4xl lg:text-5xl font-extrabold text-paper leading-[1.05]">
-              One platform,
-              <br /> Multiple ways to grow.
+              Interactive Web Experiences,
+              <br /> Built to Convert.
             </h2>
           </div>
           <p className="max-w-sm text-paper/50 text-sm">
-            Use one product standalone or combine all four — every LAX360
-            Ventures app shares the same data layer and login.
+            High-performance 3D animated web applications crafted for luxury dining, haute joaillerie, athletic clubs, and couture fashion.
           </p>
         </div>
-        <div className="grid sm:grid-cols-2 gap-6">
-          {products.map((p, i) => (
-            <ProductCard p={p} i={i} key={p.id || p.name} />
+
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+          {PRODUCTS.map((p, i) => (
+            <ProductBrowserCard p={p} i={i} key={p.id} />
           ))}
         </div>
       </div>
