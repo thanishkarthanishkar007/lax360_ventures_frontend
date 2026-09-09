@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Sun, Moon, Shield } from "lucide-react";
+import { Menu, X, Shield } from "lucide-react";
 import Logo from "./Logo";
-import { useTheme } from "../context/ThemeContext";
 
 const LINKS = [
   { to: "/", label: "Home" },
@@ -19,7 +18,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -64,15 +62,6 @@ export default function Navbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
-          <button
-            onClick={toggleTheme}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-violet-500/25 text-paper hover:border-violet-400 hover:text-violet-300 transition-all duration-300"
-            aria-label={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
-            {theme === "dark" ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-violet-600" />}
-          </button>
-
           <Link
             to="/admin"
             className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 px-5 py-2.5 text-sm font-bold text-paper hover:border-violet-400 hover:text-violet-200 transition-all duration-300"
@@ -90,14 +79,6 @@ export default function Navbar() {
         </div>
 
         <div className="flex lg:hidden items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-violet-500/25 text-paper"
-            aria-label={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
-            {theme === "dark" ? <Sun size={16} className="text-yellow-400" /> : <Moon size={16} className="text-violet-600" />}
-          </button>
           <button className="text-paper p-1" onClick={() => setOpen(!open)} aria-label="Toggle menu">
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -118,14 +99,7 @@ export default function Navbar() {
                   {l.label}
                 </Link>
               ))}
-              <button
-                onClick={() => { toggleTheme(); setOpen(false); }}
-                className="mt-2 inline-flex justify-center items-center gap-2 rounded-full border border-violet-500/25 px-5 py-3 text-sm font-bold text-paper"
-              >
-                {theme === "dark" ? <Sun size={16} className="text-yellow-400" /> : <Moon size={16} className="text-violet-600" />}
-                <span>{theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}</span>
-              </button>
-              <Link to="/admin" onClick={() => setOpen(false)} className="inline-flex justify-center items-center gap-2 rounded-full border border-violet-500/25 px-5 py-3 text-sm font-bold text-paper">
+              <Link to="/admin" onClick={() => setOpen(false)} className="mt-2 inline-flex justify-center items-center gap-2 rounded-full border border-violet-500/25 px-5 py-3 text-sm font-bold text-paper">
                 <Shield size={16} className="text-violet-400" /> Admin Panel
               </Link>
               <Link to="/book-demo" onClick={() => setOpen(false)} className="inline-flex justify-center rounded-full bg-grad-violet px-5 py-3 text-sm font-bold text-white">
