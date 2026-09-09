@@ -1,32 +1,42 @@
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Play } from "lucide-react";
 
 export default function Hero() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
+
   return (
     <section id="home" className="relative pt-44 pb-24 sm:pt-48 lg:pt-56 lg:pb-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
-      <div className="absolute inset-0 -z-10 bg-void overflow-hidden">
+      <div className="absolute inset-0 -z-10 bg-void overflow-hidden pointer-events-none">
         <video
+          ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 h-full w-full object-cover opacity-60"
+          className="absolute inset-0 h-full w-full object-cover opacity-85"
         >
           <source src="/videos/hero-bg.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-void/70" />
-        <div className="absolute inset-0 bg-violet-glow" />
-        <div className="absolute inset-0 grid-fade opacity-40" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-void to-transparent" />
+        <div className="absolute inset-0 bg-void/25" />
+        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-void to-transparent" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center flex flex-col items-center">
+      <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center flex flex-col items-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 mb-6"
+          className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 backdrop-blur-md px-4 py-1.5 mb-6"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />
           <span className="font-mono text-xs uppercase tracking-wider text-violet-200">
@@ -38,7 +48,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-display text-5xl sm:text-6xl lg:text-[4.25rem] font-extrabold leading-[1.08] text-paper"
+          className="font-display text-5xl sm:text-6xl lg:text-[4.25rem] font-extrabold leading-[1.08] text-paper drop-shadow-sm"
         >
           Transform Your Business
           <br />
@@ -51,7 +61,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="mt-7 max-w-2xl text-base sm:text-lg lg:text-xl text-paper/65 leading-relaxed"
+          className="mt-7 max-w-2xl text-base sm:text-lg lg:text-xl text-paper/75 leading-relaxed"
         >
           LAX360 Ventures builds and scales SaaS products that help teams
           automate operations, understand customers, and grow revenue —
@@ -66,7 +76,7 @@ export default function Hero() {
         >
           <Link
             to="/book-demo"
-            className="group inline-flex items-center gap-2 rounded-full bg-grad-violet px-8 py-4 font-bold text-white text-base shadow-glow-sm hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
+            className="group inline-flex items-center gap-2 rounded-full bg-grad-violet px-8 py-4 font-bold text-white text-base shadow-glow hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
           >
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
               <Play size={11} fill="currentColor" />
@@ -80,7 +90,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.4 }}
-          className="mt-6 text-xs text-paper/40"
+          className="mt-6 text-xs text-paper/50 font-medium"
         >
           No credit card required · Response within 24 hours
         </motion.p>
