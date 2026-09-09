@@ -4,10 +4,73 @@ import { Link } from "react-router-dom";
 import { 
   Shield, Layers, Users, Building2, MessageSquare, Plus, Edit2, Trash2, 
   Check, X, Search, RefreshCw, Mail, Phone, Calendar, Lock, LogOut, Key, CheckCircle,
-  Eye, EyeOff
+  Eye, EyeOff, ExternalLink, Globe, Sparkles
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import previewRestaurant from "../assets/images/preview-restaurant.png";
+import previewJewellery from "../assets/images/preview-jewellery.png";
+import previewGym from "../assets/images/preview-gym.png";
+import previewTextiles from "../assets/images/preview-textiles.png";
+
+const DEFAULT_PRODUCTS = [
+  {
+    id: "1",
+    name: "Restaurants – 3D Animated Web",
+    tag: "3D Animated Web",
+    slug: "food-hotel-demo-web.vercel.app",
+    liveUrl: "https://food-hotel-demo-web.vercel.app/?utm_source=chatgpt.com",
+    index: "#1",
+    imageUrl: previewRestaurant,
+    description: "Haute cuisine indienne & royal dining with interactive 3D table reservations and dynamic culinary menu.",
+    points: ["Interactive 3D table reservations", "Dynamic culinary menu showcase", "Chef storytelling & ambient audio"],
+  },
+  {
+    id: "2",
+    name: "Jewellery – Animated Web",
+    tag: "Animated Web",
+    slug: "jewellery-web-demo-five.vercel.app",
+    liveUrl: "https://jewellery-web-demo-five.vercel.app/?utm_source=chatgpt.com",
+    index: "#2",
+    imageUrl: previewJewellery,
+    description: "Haute joaillerie and luxury gemstone showcase with real-time reflections and cinematic transitions.",
+    points: ["High-precision gem showcases", "Bespoke consultation booking", "Cinematic jewelry catalog"],
+  },
+  {
+    id: "3",
+    name: "Gym – Cursor Interactive Web",
+    tag: "Cursor Interactive Web",
+    slug: "gym-web-nine-phi.vercel.app",
+    liveUrl: "https://gym-web-nine-phi.vercel.app/?utm_source=chatgpt.com",
+    index: "#3",
+    imageUrl: previewGym,
+    description: "Premium athletic club experience with cursor physics, membership tiers, and trainer schedules.",
+    points: ["Interactive cursor reactive canvas", "Class schedule & live bookings", "Elite trainer profile cards"],
+  },
+  {
+    id: "4",
+    name: "Textiles – Scrolling Web",
+    tag: "Scrolling Web",
+    slug: "textiles-web.vercel.app",
+    liveUrl: "https://textiles-web.vercel.app/?utm_source=chatgpt.com",
+    index: "#4",
+    imageUrl: previewTextiles,
+    description: "Haute weaves, silks, and bespoke couture fabric gallery with smooth scroll animations.",
+    points: ["Bespoke fabric visualizer", "Artisan weaver stories", "Silk sample order pipeline"],
+  },
+];
+
+const getProductImage = (p, idx) => {
+  if (p.imageUrl && (p.imageUrl.startsWith("http") || p.imageUrl.startsWith("data:") || p.imageUrl.startsWith("/assets") || p.imageUrl.startsWith("blob:"))) {
+    return p.imageUrl;
+  }
+  const name = (p.name || "").toLowerCase();
+  if (name.includes("restaurant") || name.includes("food") || name.includes("cuisine") || p.id === "1" || idx === 0) return previewRestaurant;
+  if (name.includes("jewel") || p.id === "2" || idx === 1) return previewJewellery;
+  if (name.includes("gym") || name.includes("fit") || p.id === "3" || idx === 2) return previewGym;
+  if (name.includes("textile") || name.includes("couture") || name.includes("weave") || p.id === "4" || idx === 3) return previewTextiles;
+  return previewRestaurant;
+};
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
 
@@ -184,7 +247,17 @@ export default function AdminPage() {
         if (res.ok) setDemoRequests(await res.json());
       } else if (activeTab === "products") {
         const res = await fetch(`${API_BASE_URL}/api/products`);
-        if (res.ok) setProducts(await res.json());
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const filtered = data.filter((p) => !["CRM", "ERP", "Hospital Management", "Clinic Management"].includes(p.name));
+            setProducts(filtered.length > 0 ? filtered : DEFAULT_PRODUCTS);
+          } else {
+            setProducts(DEFAULT_PRODUCTS);
+          }
+        } else {
+          setProducts(DEFAULT_PRODUCTS);
+        }
       } else if (activeTab === "industries") {
         const res = await fetch(`${API_BASE_URL}/api/industries`);
         if (res.ok) setIndustries(await res.json());
@@ -258,7 +331,16 @@ export default function AdminPage() {
   const openCreateModal = () => {
     setEditingItem({});
     if (activeTab === "products") {
-      setFormData({ name: "", tag: "", description: "", points: "" });
+      setFormData({
+        name: "",
+        tag: "",
+        slug: "",
+        liveUrl: "",
+        imageUrl: "",
+        index: `#${products.length + 1}`,
+        description: "",
+        points: "",
+      });
     } else if (activeTab === "industries") {
       setFormData({ name: "", description: "", icon: "HeartPulse" });
     } else if (activeTab === "teams") {
@@ -275,6 +357,10 @@ export default function AdminPage() {
       setFormData({
         name: item.name || "",
         tag: item.tag || "",
+        slug: item.slug || "",
+        liveUrl: item.liveUrl || "",
+        imageUrl: item.imageUrl || "",
+        index: item.index || "",
         description: item.description || item.desc || "",
         points: Array.isArray(item.points) ? item.points.join("\n") : "",
       });
@@ -532,43 +618,106 @@ export default function AdminPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 {products
                   .filter((p) => (p.name || "").toLowerCase().includes(searchQuery.toLowerCase()))
-                  .map((p) => (
-                    <div key={p.id || p.name} className="rounded-3xl border border-violet-500/15 glass p-6 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-start justify-between gap-4 mb-3">
-                          <h3 className="font-display text-xl font-bold text-paper">{p.name}</h3>
-                          <span className="font-mono text-[10px] uppercase bg-violet-500/15 text-violet-300 px-2.5 py-1 rounded-full">
-                            {p.tag}
+                  .map((p, idx) => {
+                    const imgSrc = getProductImage(p, idx);
+                    const liveUrl = p.liveUrl || (p.slug ? `https://${p.slug}` : "#");
+                    return (
+                      <div key={p.id || p.name} className="rounded-3xl border border-violet-500/15 glass overflow-hidden flex flex-col justify-between hover:border-violet-500/30 transition-all">
+                        {/* Mockup browser frame header */}
+                        <div className="flex items-center justify-between px-4 py-2.5 bg-white/[0.04] border-b border-violet-500/10">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+                          </div>
+                          <span className="px-2.5 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-paper/60 truncate max-w-[180px]">
+                            {p.slug || "live-preview.app"}
+                          </span>
+                          <span className="font-mono text-[10px] font-bold text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded border border-violet-500/20">
+                            {p.index || `#${idx + 1}`}
                           </span>
                         </div>
-                        <p className="text-xs text-paper/60 mb-4">{p.description || p.desc}</p>
-                        {Array.isArray(p.points) && p.points.length > 0 && (
-                          <ul className="space-y-1 mb-6">
-                            {p.points.map((pt, i) => (
-                              <li key={i} className="text-[11px] text-paper/50 flex items-center gap-1.5">
-                                <Check size={12} className="text-violet-400" /> {pt}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
 
-                      <div className="flex items-center gap-2 pt-4 border-t border-violet-500/10">
-                        <button
-                          onClick={() => openEditModal(p)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-violet-500/20 text-xs font-semibold text-violet-300 hover:bg-violet-500/10"
-                        >
-                          <Edit2 size={13} /> Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-500/20 text-xs font-semibold text-red-400 hover:bg-red-500/10"
-                        >
-                          <Trash2 size={13} /> Delete
-                        </button>
+                        {/* Image Preview */}
+                        <div className="relative aspect-[16/9] overflow-hidden bg-black/40 border-b border-white/5">
+                          <img
+                            src={imgSrc}
+                            alt={p.name}
+                            className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+
+                        {/* Content Body */}
+                        <div className="p-5 flex flex-col flex-1 justify-between">
+                          <div>
+                            <div className="flex items-start justify-between gap-3 mb-2">
+                              <div>
+                                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-400 block mb-1">
+                                  {p.tag}
+                                </span>
+                                <h3 className="font-display text-lg font-bold text-paper leading-snug">{p.name}</h3>
+                              </div>
+                            </div>
+
+                            <p className="text-xs text-paper/60 mb-3">{p.description || p.desc}</p>
+
+                            {Array.isArray(p.points) && p.points.length > 0 && (
+                              <ul className="space-y-1 mb-4">
+                                {p.points.map((pt, i) => (
+                                  <li key={i} className="text-[11px] text-paper/50 flex items-center gap-1.5">
+                                    <Check size={12} className="text-violet-400 shrink-0" /> {pt}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+
+                          {/* Action links */}
+                          <div className="pt-3 border-t border-violet-500/10 flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              {p.liveUrl && (
+                                <a
+                                  href={liveUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-600/30 border border-violet-500/30 text-xs font-semibold text-violet-200 hover:bg-violet-600/50 transition-colors"
+                                >
+                                  <ExternalLink size={12} /> Live Demo
+                                </a>
+                              )}
+                              <button
+                                onClick={() => {
+                                  setActiveTab("demo-requests");
+                                  setSearchQuery(p.name);
+                                }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-violet-500/20 text-xs font-semibold text-paper/70 hover:text-white hover:bg-white/5 transition-colors"
+                                title="Filter Demo Requests for this product"
+                              >
+                                View Requests
+                              </button>
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={() => openEditModal(p)}
+                                className="p-2 rounded-xl border border-violet-500/20 text-violet-300 hover:bg-violet-500/10 transition-colors"
+                                title="Edit Product"
+                              >
+                                <Edit2 size={13} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(p.id)}
+                                className="p-2 rounded-xl border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                                title="Delete Product"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
               </div>
             )}
 
@@ -790,31 +939,76 @@ export default function AdminPage() {
               <form onSubmit={handleSaveModal} className="space-y-4 text-xs">
                 {activeTab === "products" && (
                   <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-paper/60 uppercase font-mono mb-1">Product Name</label>
+                        <input
+                          required
+                          value={formData.name || ""}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
+                          placeholder="e.g. Restaurants – 3D Animated Web"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-paper/60 uppercase font-mono mb-1">Category Tag</label>
+                        <input
+                          required
+                          value={formData.tag || ""}
+                          onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
+                          className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
+                          placeholder="e.g. 3D Animated Web"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-paper/60 uppercase font-mono mb-1">Live URL Slug / Domain</label>
+                        <input
+                          value={formData.slug || ""}
+                          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                          className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
+                          placeholder="e.g. food-hotel-demo-web.vercel.app"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-paper/60 uppercase font-mono mb-1">Index Badge</label>
+                        <input
+                          value={formData.index || ""}
+                          onChange={(e) => setFormData({ ...formData, index: e.target.value })}
+                          className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
+                          placeholder="e.g. #1"
+                        />
+                      </div>
+                    </div>
+
                     <div>
-                      <label className="block text-paper/60 uppercase font-mono mb-1">Product Name</label>
+                      <label className="block text-paper/60 uppercase font-mono mb-1">Live Demo Website URL</label>
                       <input
-                        required
-                        value={formData.name || ""}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        type="url"
+                        value={formData.liveUrl || ""}
+                        onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
                         className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
-                        placeholder="e.g. CRM"
+                        placeholder="e.g. https://food-hotel-demo-web.vercel.app/"
                       />
                     </div>
+
                     <div>
-                      <label className="block text-paper/60 uppercase font-mono mb-1">Category Tag</label>
+                      <label className="block text-paper/60 uppercase font-mono mb-1">Image URL / Path (optional)</label>
                       <input
-                        required
-                        value={formData.tag || ""}
-                        onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
+                        value={formData.imageUrl || ""}
+                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                         className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
-                        placeholder="e.g. Healthcare"
+                        placeholder="e.g. /images/preview-restaurant.png or https://..."
                       />
                     </div>
+
                     <div>
                       <label className="block text-paper/60 uppercase font-mono mb-1">Description</label>
                       <textarea
                         required
-                        rows={3}
+                        rows={2}
                         value={formData.description || ""}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"

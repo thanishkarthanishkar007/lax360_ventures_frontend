@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
@@ -5,6 +6,8 @@ import previewRestaurant from "../assets/images/preview-restaurant.png";
 import previewJewellery from "../assets/images/preview-jewellery.png";
 import previewGym from "../assets/images/preview-gym.png";
 import previewTextiles from "../assets/images/preview-textiles.png";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:8080" : "https://lax360-ventures-backend.onrender.com");
 
 function GithubIcon(props) {
   return (
@@ -15,7 +18,7 @@ function GithubIcon(props) {
   );
 }
 
-const PRODUCTS = [
+const DEFAULT_PRODUCTS = [
   {
     id: "1",
     name: "Restaurants – 3D Animated Web",
@@ -53,6 +56,17 @@ const PRODUCTS = [
     image: previewTextiles,
   },
 ];
+
+const IMAGE_MAP = {
+  "1": previewRestaurant,
+  "2": previewJewellery,
+  "3": previewGym,
+  "4": previewTextiles,
+  "Restaurants – 3D Animated Web": previewRestaurant,
+  "Jewellery – Animated Web": previewJewellery,
+  "Gym – Cursor Interactive Web": previewGym,
+  "Textiles – Scrolling Web": previewTextiles,
+};
 
 function ProductBrowserCard({ p, i }) {
   return (
@@ -132,6 +146,30 @@ function ProductBrowserCard({ p, i }) {
 }
 
 export default function Products() {
+  const [products, setProducts] = useState(DEFAULT_PRODUCTS);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/products`)
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const valid = data.filter((p) => !["CRM", "ERP", "Hospital Management", "Clinic Management"].includes(p.name));
+          if (valid.length > 0) {
+            setProducts(valid.map((p, i) => ({
+              ...p,
+              image: p.imageUrl && (p.imageUrl.startsWith("http") || p.imageUrl.startsWith("data:"))
+                ? p.imageUrl
+                : IMAGE_MAP[p.id] || IMAGE_MAP[p.name] || (i === 0 ? previewRestaurant : i === 1 ? previewJewellery : i === 2 ? previewGym : previewTextiles),
+              index: p.index || `#${i + 1}`,
+              slug: p.slug || (p.liveUrl ? p.liveUrl.replace(/https?:\/\//, '').split('/')[0] : `product-${i + 1}.vercel.app`),
+              liveUrl: p.liveUrl || (i === 0 ? "https://food-hotel-demo-web.vercel.app/" : i === 1 ? "https://jewellery-web-demo-five.vercel.app/" : i === 2 ? "https://gym-web-nine-phi.vercel.app/" : "https://textiles-web.vercel.app/"),
+            })));
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section id="products" className="relative bg-void py-24 lg:py-32 overflow-hidden scroll-mt-28 lg:scroll-mt-32">
       <div className="absolute inset-0 grid-fade opacity-30 pointer-events-none" />
@@ -152,8 +190,8 @@ export default function Products() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-          {PRODUCTS.map((p, i) => (
-            <ProductBrowserCard p={p} i={i} key={p.id} />
+          {products.map((p, i) => (
+            <ProductBrowserCard p={p} i={i} key={p.id || p.name} />
           ))}
         </div>
       </div>
