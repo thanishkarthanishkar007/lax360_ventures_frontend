@@ -2,7 +2,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
 import Products from "../components/Products";
-import Statistics from "../components/Statistics";
 import productsBg from "../assets/images/products-bg.jpg";
 
 export default function ProductsPage() {
@@ -17,7 +16,6 @@ export default function ProductsPage() {
           bgImage={productsBg}
         />
         <Products />
-        <Statistics />
       </main>
       <Footer />
     </div>
