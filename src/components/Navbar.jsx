@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Shield } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
 
 const LINKS = [
@@ -63,14 +63,6 @@ export default function Navbar() {
 
         <div className="hidden lg:flex items-center gap-3">
           <Link
-            to="/admin"
-            className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 px-5 py-2.5 text-sm font-bold text-paper hover:border-violet-400 hover:text-violet-200 transition-all duration-300"
-          >
-            <Shield size={15} className="text-violet-400" />
-            Admin
-          </Link>
-
-          <Link
             to="/book-demo"
             className="inline-flex items-center gap-2 rounded-full bg-grad-violet px-5 py-2.5 text-sm font-bold text-white shadow-glow-sm hover:shadow-glow transition-all duration-300"
           >
@@ -99,10 +91,7 @@ export default function Navbar() {
                   {l.label}
                 </Link>
               ))}
-              <Link to="/admin" onClick={() => setOpen(false)} className="mt-2 inline-flex justify-center items-center gap-2 rounded-full border border-violet-500/25 px-5 py-3 text-sm font-bold text-paper">
-                <Shield size={16} className="text-violet-400" /> Admin Panel
-              </Link>
-              <Link to="/book-demo" onClick={() => setOpen(false)} className="inline-flex justify-center rounded-full bg-grad-violet px-5 py-3 text-sm font-bold text-white">
+              <Link to="/book-demo" onClick={() => setOpen(false)} className="mt-2 inline-flex justify-center rounded-full bg-grad-violet px-5 py-3 text-sm font-bold text-white">
                 Get Demo
               </Link>
             </div>
