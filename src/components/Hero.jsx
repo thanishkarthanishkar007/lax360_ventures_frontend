@@ -39,18 +39,6 @@ export default function Hero() {
       </div>
 
       <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center flex flex-col items-center relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 backdrop-blur-md px-4 py-1.5 mb-6"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />
-          <span className="font-mono text-xs uppercase tracking-wider text-violet-700 dark:text-violet-200 font-semibold">
-            LAX360 Ventures · SaaS Product Suite
-          </span>
-        </motion.div>
-
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
