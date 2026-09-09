@@ -4,6 +4,7 @@ import { Link2, Mail } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
+import teamsBg from "../assets/images/teams-bg.jpg";
 
 const DEFAULT_TEAM = [
   { initials: "AK", name: "Arjun Kapoor", role: "Founder & CEO" },
@@ -40,6 +41,7 @@ export default function TeamsPage() {
           eyebrow="Our team"
           title="The people building LAX360 Ventures."
           description="A small, senior team spanning product, engineering, design, and customer success — spread across India and working close to our customers."
+          bgImage={teamsBg}
         />
 
         <section className="relative bg-void pb-24 lg:pb-32">

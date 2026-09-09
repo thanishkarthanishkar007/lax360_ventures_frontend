@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
 import Products from "../components/Products";
 import Statistics from "../components/Statistics";
+import productsBg from "../assets/images/products-bg.jpg";
 
 export default function ProductsPage() {
   return (
@@ -13,6 +14,7 @@ export default function ProductsPage() {
           eyebrow="Our products"
           title="One platform, Multiple ways to grow."
           description="CRM, ERP, Hospital Management, and Clinic Management — use one standalone, or combine all four on a shared data layer and login."
+          bgImage={productsBg}
         />
         <Products />
         <Statistics />

@@ -4,6 +4,7 @@ import { MapPin, Mail, Phone, Clock, Link2, Camera, MessageCircle, ArrowUpRight 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
+import contactBg from "../assets/images/contact-bg.jpg";
 
 const DETAILS = [
   {
@@ -31,6 +32,7 @@ export default function ContactPage() {
           eyebrow="📞 Contact"
           title="We'd love to hear from you."
           description="Questions about a product, a partnership, or just want to say hello — reach us directly, or drop by our office."
+          bgImage={contactBg}
         />
 
         <section className="relative bg-void pb-24 lg:pb-32">

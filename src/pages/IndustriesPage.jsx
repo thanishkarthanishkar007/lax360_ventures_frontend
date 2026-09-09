@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
 import Industries from "../components/Industries";
 import WhyLax360 from "../components/WhyLax360";
+import industriesBg from "../assets/images/industries-bg.jpg";
 
 export default function IndustriesPage() {
   return (
@@ -13,6 +14,7 @@ export default function IndustriesPage() {
           eyebrow="Industries we serve"
           title="Built to flex across sectors."
           description="From fintech compliance to hospital scheduling, LAX360 Ventures adapts to how your industry actually operates."
+          bgImage={industriesBg}
         />
         <Industries />
         <WhyLax360 />
