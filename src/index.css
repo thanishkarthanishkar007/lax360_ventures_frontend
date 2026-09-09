@@ -102,11 +102,53 @@ html.light footer {
 
 ::selection { background: #8B5CF6; color: #fff; }
 
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #0A0714; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(10, 7, 20, 0.9); }
 html.light ::-webkit-scrollbar-track { background: #F1F5F9; }
-::-webkit-scrollbar-thumb { background: #3B1774; border-radius: 8px; }
+::-webkit-scrollbar-thumb { 
+  background: #6D28D9; 
+  border-radius: 9999px; 
+  border: 2px solid rgba(10, 7, 20, 0.9); 
+}
 ::-webkit-scrollbar-thumb:hover { background: #8B5CF6; }
+
+/* Dedicated Visible Custom Scrollbar for modals and scroll containers */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #8B5CF6 rgba(255, 255, 255, 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #8B5CF6;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #A78BFA;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.6);
+}
+
+html.light .custom-scrollbar {
+  scrollbar-color: #7C3AED #E2E8F0;
+}
+
+html.light .custom-scrollbar::-webkit-scrollbar-track {
+  background: #E2E8F0;
+}
+
+html.light .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #7C3AED;
+}
 
 .perspective { perspective: 1400px; }
 .preserve-3d { transform-style: preserve-3d; }

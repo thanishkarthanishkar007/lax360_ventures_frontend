@@ -920,23 +920,27 @@ export default function AdminPage() {
       {/* CREATE / EDIT MODAL */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/85 backdrop-blur-md overflow-y-auto">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-lg rounded-3xl border border-violet-500/20 glass p-6 sm:p-8"
+              className="w-full max-w-xl max-h-[90vh] rounded-3xl border border-violet-500/25 glass p-6 sm:p-8 flex flex-col my-auto shadow-[0_0_50px_rgba(0,0,0,0.8)]"
             >
-              <div className="flex items-center justify-between mb-6 pb-3 border-b border-violet-500/15">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-violet-500/15 shrink-0">
                 <h3 className="font-display text-lg font-bold text-paper">
                   {editingItem?.id ? "Edit" : "Add New"} {activeTab.slice(0, -1)}
                 </h3>
-                <button onClick={() => setIsModalOpen(false)} className="text-paper/50 hover:text-paper">
+                <button 
+                  onClick={() => setIsModalOpen(false)} 
+                  className="p-1.5 rounded-xl hover:bg-white/10 text-paper/50 hover:text-paper transition-colors"
+                >
                   <X size={20} />
                 </button>
               </div>
 
-              <form onSubmit={handleSaveModal} className="space-y-4 text-xs">
+              <form onSubmit={handleSaveModal} className="flex flex-col flex-1 min-h-0">
+                <div className="space-y-4 text-xs overflow-y-auto pr-3 py-1 custom-scrollbar flex-1 max-h-[60vh]">
                 {activeTab === "products" && (
                   <>
                     <div className="grid grid-cols-2 gap-3">
@@ -1011,7 +1015,7 @@ export default function AdminPage() {
                         rows={2}
                         value={formData.description || ""}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
+                        className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400 custom-scrollbar"
                         placeholder="Short summary of the product..."
                       />
                     </div>
@@ -1021,7 +1025,7 @@ export default function AdminPage() {
                         rows={3}
                         value={formData.points || ""}
                         onChange={(e) => setFormData({ ...formData, points: e.target.value })}
-                        className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
+                        className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400 custom-scrollbar"
                         placeholder="Feature 1&#10;Feature 2"
                       />
                     </div>
@@ -1047,7 +1051,7 @@ export default function AdminPage() {
                         rows={3}
                         value={formData.description || ""}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
+                        className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400 custom-scrollbar"
                         placeholder="How product fits this industry..."
                       />
                     </div>
@@ -1126,7 +1130,7 @@ export default function AdminPage() {
                         rows={3}
                         value={formData.quote || ""}
                         onChange={(e) => setFormData({ ...formData, quote: e.target.value })}
-                        className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400"
+                        className="w-full rounded-xl bg-void border border-violet-500/20 p-3 text-paper focus:outline-none focus:border-violet-400 custom-scrollbar"
                         placeholder="Customer review..."
                       />
                     </div>
@@ -1143,17 +1147,19 @@ export default function AdminPage() {
                   </>
                 )}
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-violet-500/15">
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-violet-500/15 shrink-0 mt-3">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2.5 rounded-full border border-violet-500/20 text-paper/60 hover:text-paper"
+                    className="px-5 py-2.5 rounded-full border border-violet-500/20 text-xs font-semibold text-paper/70 hover:text-paper hover:bg-white/5 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2.5 rounded-full bg-grad-violet font-bold text-white shadow-glow-sm hover:shadow-glow"
+                    className="px-6 py-2.5 rounded-full bg-grad-violet font-bold text-xs text-white shadow-glow-sm hover:shadow-glow hover:-translate-y-0.5 transition-all"
                   >
                     Save Changes
                   </button>
